@@ -27,8 +27,8 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<OAuthLink> OAuthLinks = new ArrayList<>();
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
+    private List<OAuthLink> oAuthLinks = new ArrayList<>();
 
     private Instant createAt;
     private Instant updateAt;

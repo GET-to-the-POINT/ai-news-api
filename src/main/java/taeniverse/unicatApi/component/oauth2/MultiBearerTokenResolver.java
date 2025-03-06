@@ -18,7 +18,8 @@ public class MultiBearerTokenResolver implements BearerTokenResolver {
     private final AppProperties appProperties;
 
     @Override
-    public String resolve(HttpServletRequest request) {String token = defaultResolver.resolve(request);
+    public String resolve(HttpServletRequest request) {
+        String token = defaultResolver.resolve(request);
         if (token != null) {
             return token;
         }

@@ -11,8 +11,11 @@ import org.springframework.web.server.ResponseStatusException;
 import taeniverse.unicatApi.mvc.model.dto.sign.SignInDto;
 import taeniverse.unicatApi.mvc.model.dto.sign.SignUpDto;
 import taeniverse.unicatApi.mvc.model.entity.Member;
+import taeniverse.unicatApi.mvc.model.entity.Role;
 import taeniverse.unicatApi.mvc.repository.MemberRepository;
 import taeniverse.unicatApi.component.util.JwtUtil;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +35,11 @@ public class AuthService {
 
         Member member = memberService.create(signUpDto.email(), passwordEncoder.encode(signUpDto.password()));
 
-        String token = jwtUtil.generateJwtToken(member.getId(), member.getEmail());
+        List<String> roleNames = member.getRoles().stream()
+                .map(Role::getName)
+                .toList();
+
+        String token = jwtUtil.generateJwtToken(member.getId(), member.getEmail(), roleNames);
         jwtUtil.addJwtCookie(response, token);
     }
 
@@ -43,7 +50,11 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, errorMessage);
         }
 
-        String token = jwtUtil.generateJwtToken(member.getId(), member.getEmail());
+        List<String> roleNames = member.getRoles().stream()
+                .map(Role::getName)
+                .toList();
+
+        String token = jwtUtil.generateJwtToken(member.getId(), member.getEmail(), roleNames);
         jwtUtil.addJwtCookie(response, token);
     }
 

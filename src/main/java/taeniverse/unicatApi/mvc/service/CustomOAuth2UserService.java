@@ -6,11 +6,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import taeniverse.unicatApi.component.oauth2.CustomOAuth2User;
 import taeniverse.unicatApi.component.oauth2.OAuth2UserInfo;
-import taeniverse.unicatApi.component.oauth2.OAuth2UserInfoFactory;
 import taeniverse.unicatApi.mvc.model.entity.Member;
 
 import java.util.Collection;
@@ -29,14 +28,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, attributes);
+        OAuth2UserInfo userInfo = OAuth2UserInfo.from(registrationId, attributes);
+        String email = userInfo.getEmail();
+        Member member = memberService.findOrCreateMember(email, registrationId);
+        userInfo.setMemberId(member.getId());
 
-        Member member = memberService.findOrCreateMember(userInfo.getEmail(), registrationId);
-
-        Collection<GrantedAuthority> authorities = member.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+        Collection<GrantedAuthority> authorities = userInfo.getAttributes().keySet().stream()
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        return new CustomOAuth2User(member.getId().toString(), userInfo, authorities);
+        return new DefaultOAuth2User(authorities, userInfo.getAttributes(), "memberId");
     }
 }

@@ -12,6 +12,7 @@ import taeniverse.unicatApi.component.propertie.AppProperties;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -42,11 +43,12 @@ public class JwtUtil {
         response.addCookie(jwtCookie);
     }
 
-    public String generateJwtToken(Long memberId, String email) {
+    public String generateJwtToken(Long memberId, String email, List<String> roles) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .subject(memberId.toString())
                 .claim("email", email)
+                .claim("roles", roles)
                 .issuedAt(now)
                 .expiresAt(now.plus(appProperties.jwt().cookie().maxAge(), ChronoUnit.SECONDS))
                 .build();

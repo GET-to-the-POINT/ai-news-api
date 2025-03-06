@@ -1,22 +1,22 @@
 package taeniverse.unicatApi.component.oauth2;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.Map;
 
-@Getter
+@RequiredArgsConstructor
 public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
 
-    // 원본 속성을 저장하는 맵
     private final Map<String, Object> attributes;
 
-    public GoogleOAuth2UserInfo(Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
+    @Setter
+    @Getter
+    private Long memberId;
 
     @Override
     public String getId() {
-        // 구글의 경우 "sub" 속성이 고유 식별자입니다.
         return (String) attributes.get("sub");
     }
 
@@ -28,5 +28,21 @@ public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
     @Override
     public String getName() {
         return (String) attributes.get("name");
+    }
+
+    @Override
+    public String getPicture() {
+        return (String) attributes.get("picture");
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return Map.of(
+                "id", getId(),
+                "email", getEmail(),
+                "name", getName(),
+                "picture", getPicture(),
+                "memberId", getMemberId()
+        );
     }
 }

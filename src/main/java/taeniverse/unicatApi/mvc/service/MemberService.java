@@ -1,10 +1,7 @@
 package taeniverse.unicatApi.mvc.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import taeniverse.unicatApi.mvc.model.entity.Member;
 import taeniverse.unicatApi.mvc.model.entity.OAuthLink;
 import taeniverse.unicatApi.mvc.model.entity.Role;
@@ -26,11 +23,6 @@ public class MemberService {
                 .build();
 
         return memberRepository.save(member);
-    }
-
-    public Member findByEmail(String email) {
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 이메일을 가진 사용자가 없습니다: " + email));
     }
 
     public Member findOrCreateMember(String email, String registrationId) {

@@ -33,8 +33,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Member member = memberService.findOrCreateMember(email, registrationId);
         userInfo.setMemberId(member.getId());
 
-        Collection<GrantedAuthority> authorities = userInfo.getAttributes().keySet().stream()
-                .map(SimpleGrantedAuthority::new)
+        Collection<GrantedAuthority> authorities = member.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
         return new DefaultOAuth2User(authorities, userInfo.getAttributes(), "memberId");

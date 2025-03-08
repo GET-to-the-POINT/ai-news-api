@@ -1,9 +1,9 @@
-package taeniverse.unicatApi.mvc.service;
+package getToThePoint.unicatApi.application.service;
 
+import getToThePoint.unicatApi.domain.entity.OAuthLink;
+import getToThePoint.unicatApi.domain.repository.OAuthLinkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import taeniverse.unicatApi.mvc.model.entity.OAuthLink;
-import taeniverse.unicatApi.mvc.repository.OAuthLinkRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

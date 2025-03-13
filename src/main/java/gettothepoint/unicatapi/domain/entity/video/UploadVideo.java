@@ -19,10 +19,13 @@ public class UploadVideo extends BaseEntity {
     @OneToOne
     private Project project;
 
+    private String channelId;
+
     @Builder
-    public UploadVideo(String linkId, Project project) {
+    public UploadVideo(String linkId, String channelId, Project project) {
         this.linkId = linkId;
         this.project = project;
+        this.channelId = channelId;
     }
 
 }

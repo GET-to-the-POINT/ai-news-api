@@ -29,11 +29,14 @@ public class YouTubeUploadController {
             @Parameter(description = "업로드할 동영상의 ID", required = true)
             @PathVariable("videoId") Long videoId,
             @Valid @RequestBody VideoUploadRequest request,
+            @Parameter(description = "업로드할 채널의 ID", required = true)
+            @RequestParam String channelId,
             @Parameter(hidden = true)
             @RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient authorizedClient) {
 
         youtubeUploadService.uploadVideo(
                 videoId,
+                channelId,
                 authorizedClient.getAccessToken(),
                 request.getTitle(),
                 request.getDescription(),

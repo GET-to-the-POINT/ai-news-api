@@ -33,19 +33,12 @@ public class YoutubeUploadService {
     private final YoutubeOAuth2Service youtubeoAuth2Service;
     private final UploadProgressService uploadProgressService;
 
-    private static Video getYoutubeVideo(String title, String description) {
-        Video youtubeVideo = new Video();
-        VideoSnippet snippet = new VideoSnippet();
-        snippet.setTitle(title);
-        snippet.setDescription(description);
-        youtubeVideo.setSnippet(snippet);
-        return youtubeVideo;
-    }
-
     public void uploadVideo(Long projectId, String channelId, OAuth2AccessToken accessToken, String title, String description, String visibility) {
 
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Video not found for ID: " + projectId));
+                .orElseThrow(() -> {
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Video not found for ID: " + projectId);
+                });
 
         File videoFile = new File(project.getVideoUrl());
         if (!videoFile.exists() || !videoFile.isFile()) {
@@ -61,6 +54,7 @@ public class YoutubeUploadService {
         CompletableFuture.runAsync(() -> {
             try {
                 YouTube youtubeService = youtubeoAuth2Service.getYouTubeService(accessToken);
+
                 Video youtubeVideo = getYoutubeVideo(title, description);
 
                 VideoStatus status = new VideoStatus();
@@ -91,6 +85,15 @@ public class YoutubeUploadService {
                 uploadProgressService.markFailed(project.getId());
             }
         });
+    }
+
+    private static Video getYoutubeVideo(String title, String description) {
+        Video youtubeVideo = new Video();
+        VideoSnippet snippet = new VideoSnippet();
+        snippet.setTitle(title);
+        snippet.setDescription(description);
+        youtubeVideo.setSnippet(snippet);
+        return youtubeVideo;
     }
 
     @Transactional

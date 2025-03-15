@@ -1,12 +1,13 @@
 package gettothepoint.unicatapi.presentation.controller.projetct;
 
+import gettothepoint.unicatapi.application.service.OpenAiService;
 import gettothepoint.unicatapi.application.service.ProjectService;
 import gettothepoint.unicatapi.application.service.SectionService;
-import gettothepoint.unicatapi.domain.dto.project.ProjectResponse;
-import gettothepoint.unicatapi.domain.dto.project.SectionRequest;
-import gettothepoint.unicatapi.domain.dto.project.SectionResponse;
+import gettothepoint.unicatapi.domain.dto.project.*;
 import gettothepoint.unicatapi.domain.dto.storage.StorageUpload;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/project")
+@RequestMapping("/projects")
 @RequiredArgsConstructor
 public class ProjectController {
 
     private final ProjectService projectService;
     private final SectionService sectionService;
+    private final OpenAiService openAiService;
 
     @GetMapping() // 프로젝트 조회 API
     public ProjectResponse getProjects(
@@ -37,7 +39,7 @@ public class ProjectController {
         return projectService.createProject(memberId);
     }
 
-    @PostMapping("/{projectId}/section")
+    @PostMapping("/{projectId}/sections")
     public Long createSection(@PathVariable Long projectId) {
        return sectionService.createSection(projectId);
     }
@@ -67,4 +69,9 @@ public class ProjectController {
         return sectionService.updateSectionSortOrder(sectionId, newOrder);
     }
 
+    @PostMapping("/{id}/sections/{sectionId}/script")
+    @ResponseStatus(HttpStatus.OK)
+    public ScriptResponse refineScript(@PathVariable Long id, @PathVariable Long sectionId, @RequestBody @Valid ScriptRequest scriptRequest) {
+        return openAiService.createScript(id, sectionId, scriptRequest);
+    }
 }

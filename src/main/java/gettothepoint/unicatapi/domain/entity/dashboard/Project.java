@@ -23,6 +23,8 @@ public class Project extends BaseEntity {
     private String subtitle;
     private String thumbnailUrl;
     private String videoUrl;
+    private String scriptTone;
+    private String imageStyle;
 
     @ManyToOne
     @JoinColumn
